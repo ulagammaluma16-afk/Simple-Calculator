@@ -1,30 +1,447 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Calculator</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mood-Based Study Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#0f172a,#2563eb,#9333ea);
+min-height:100vh;
+overflow-x:hidden;
+color:white;
+position:relative;
+}
+
+body::before,
+body::after{
+content:'';
+position:fixed;
+border-radius:50%;
+filter:blur(90px);
+opacity:.4;
+animation:float 10s infinite alternate;
+z-index:-1;
+}
+
+body::before{
+width:250px;
+height:250px;
+background:#00d4ff;
+top:-80px;
+left:-50px;
+}
+
+body::after{
+width:300px;
+height:300px;
+background:#ff00aa;
+right:-80px;
+bottom:-80px;
+}
+
+.circle{
+position:fixed;
+width:180px;
+height:180px;
+border-radius:50%;
+background:#22d3ee;
+filter:blur(70px);
+bottom:30%;
+left:40%;
+opacity:.25;
+animation:float2 12s infinite alternate;
+z-index:-1;
+}
+
+@keyframes float{
+from{transform:translateY(-20px);}
+to{transform:translateY(40px);}
+}
+
+@keyframes float2{
+from{transform:translateX(-40px);}
+to{transform:translateX(40px);}
+}
+
+.container{
+width:90%;
+max-width:1200px;
+margin:auto;
+padding:40px 0;
+}
+
+header{
+text-align:center;
+margin-bottom:40px;
+}
+
+header h1{
+font-size:45px;
+margin-bottom:10px;
+}
+
+header p{
+opacity:.85;
+}
+
+.line{
+width:120px;
+height:5px;
+margin:15px auto;
+border-radius:20px;
+background:linear-gradient(to right,#00e5ff,#ff00c8);
+}
+
+input{
+display:none;
+}
+
+.moods{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:25px;
+margin-bottom:40px;
+}
+
+.card{
+background:rgba(255,255,255,.15);
+backdrop-filter:blur(20px);
+border-radius:20px;
+padding:30px;
+text-align:center;
+cursor:pointer;
+transition:.4s;
+box-shadow:0 10px 30px rgba(0,0,0,.2);
+}
+
+.card:hover{
+transform:translateY(-10px) scale(1.03);
+}
+
+.card span{
+font-size:60px;
+display:block;
+margin-bottom:10px;
+}
+
+.focus{
+background:linear-gradient(135deg,#2563eb,#38bdf8);
+}
+
+.sleep{
+background:linear-gradient(135deg,#9333ea,#c084fc);
+}
+
+.stress{
+background:linear-gradient(135deg,#16a34a,#4ade80);
+}
+
+.dashboard{
+display:none;
+margin-top:20px;
+animation:fade .6s;
+}
+
+@keyframes fade{
+from{
+opacity:0;
+transform:translateY(20px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+#focus:checked~.dashboards .focusdash{
+display:block;
+}
+
+#sleep:checked~.dashboards .sleepdash{
+display:block;
+}
+
+#stress:checked~.dashboards .stressdash{
+display:block;
+}
+
+.panel{
+background:rgba(255,255,255,.12);
+backdrop-filter:blur(25px);
+padding:35px;
+border-radius:25px;
+box-shadow:0 20px 40px rgba(0,0,0,.2);
+}
+
+.panel h2{
+margin-bottom:25px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+gap:20px;
+}
+
+.box{
+background:rgba(255,255,255,.15);
+padding:20px;
+border-radius:18px;
+transition:.3s;
+}
+
+.box:hover{
+transform:translateY(-6px);
+}
+
+.box h3{
+margin-bottom:12px;
+}
+
+.progress{
+width:140px;
+height:140px;
+margin:auto;
+border-radius:50%;
+background:
+conic-gradient(#00ff99 270deg,#ffffff33 0);
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.progress::before{
+content:"75%";
+width:105px;
+height:105px;
+background:#1e293b;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:28px;
+font-weight:bold;
+}
+
+footer{
+text-align:center;
+padding:35px;
+opacity:.8;
+font-size:18px;
+}
+
+@media(max-width:700px){
+
+header h1{
+font-size:32px;
+}
+
+}
+
+</style>
+
 </head>
+
 <body>
 
-<div class="calculator">
-    <h2>Simple Calculator</h2>
+<div class="circle"></div>
 
-    <input type="number" id="num1" placeholder="First Number">
-    <input type="number" id="num2" placeholder="Second Number">
+<div class="container">
 
-    <br><br>
+<header>
 
-    <button onclick="add()">Add</button>
-    <button onclick="subtract()">Subtract</button>
-    <button onclick="multiply()">Multiply</button>
-    <button onclick="divide()">Divide</button>
+<h1>Mood-Based Study Dashboard</h1>
 
-    <h3 id="result">Result:</h3>
+<p>Choose your mood and discover the perfect study environment.</p>
+
+<div class="line"></div>
+
+</header>
+
+<input type="radio" name="mood" id="focus" checked>
+<input type="radio" name="mood" id="sleep">
+<input type="radio" name="mood" id="stress">
+
+<div class="moods">
+
+<label class="card focus" for="focus">
+<span>😊</span>
+<h2>Focused</h2>
+<p>Ready to conquer today's study goals.</p>
+</label>
+
+<label class="card sleep" for="sleep">
+<span>😴</span>
+<h2>Sleepy</h2>
+<p>Need a quick energy boost.</p>
+</label>
+
+<label class="card stress" for="stress">
+<span>😓</span>
+<h2>Stressed</h2>
+<p>Relax and study smarter.</p>
+</label>
+
 </div>
 
-<script src="script.js"></script>
+<div class="dashboards">
+
+<div class="dashboard focusdash">
+
+<div class="panel">
+
+<h2>😊 You're Ready to Focus!</h2>
+
+<div class="grid">
+
+<div class="box">
+
+<div class="progress"></div>
+
+</div>
+
+<div class="box">
+<h3>🎯 Daily Goal</h3>
+<p>Complete 3 Study Sessions</p>
+</div>
+
+<div class="box">
+<h3>⏰ Study Time</h3>
+<p>2 Hours 30 Minutes</p>
+</div>
+
+<div class="box">
+<h3>📖 Study Tip</h3>
+<p>Use the Pomodoro technique (25 min study + 5 min break).</p>
+</div>
+
+<div class="box">
+<h3>💬 Motivation</h3>
+<p>Consistency beats intensity.</p>
+</div>
+
+<div class="box">
+<h3>🎵 Music</h3>
+<p>Lo-fi Beats</p>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="dashboard sleepdash">
+
+<div class="panel">
+
+<h2>😴 Recharge Your Mind</h2>
+
+<div class="grid">
+
+<div class="box">
+
+<div class="progress"></div>
+
+</div>
+
+<div class="box">
+<h3>🎯 Daily Goal</h3>
+<p>Complete 3 Study Sessions</p>
+</div>
+
+<div class="box">
+<h3>⏰ Study Time</h3>
+<p>2 Hours 30 Minutes</p>
+</div>
+
+<div class="box">
+<h3>📖 Study Tip</h3>
+<p>Drink water, stretch for 2 minutes, then continue.</p>
+</div>
+
+<div class="box">
+<h3>💬 Motivation</h3>
+<p>Small progress is still progress.</p>
+</div>
+
+<div class="box">
+<h3>🎵 Music</h3>
+<p>Nature Sounds</p>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="dashboard stressdash">
+
+<div class="panel">
+
+<h2>😓 Stay Calm</h2>
+
+<div class="grid">
+
+<div class="box">
+
+<div class="progress"></div>
+
+</div>
+
+<div class="box">
+<h3>🎯 Daily Goal</h3>
+<p>Complete 3 Study Sessions</p>
+</div>
+
+<div class="box">
+<h3>⏰ Study Time</h3>
+<p>2 Hours 30 Minutes</p>
+</div>
+
+<div class="box">
+<h3>📖 Study Tip</h3>
+<p>Take three deep breaths and divide work into smaller tasks.</p>
+</div>
+
+<div class="box">
+<h3>💬 Motivation</h3>
+<p>You don't have to finish everything today.</p>
+</div>
+
+<div class="box">
+<h3>🎵 Music</h3>
+<p>Calm Piano</p>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<footer>
+
+Designed for Students ❤️
+
+</footer>
+
+</div>
 
 </body>
 </html>
